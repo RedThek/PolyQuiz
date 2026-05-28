@@ -2,9 +2,16 @@ import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
+// Page d'accueil et login pour le quiz.
+// Cette page utilise UserContext pour stocker le pseudo global.
 const Accueil = () => {
+  // On récupère l'état pseudo et la fonction setPseudo depuis le contexte.
   const { pseudo, setPseudo } = useContext(UserContext);
+
+  // username est l'état local du champ de saisie.
   const [username, setUsername] = useState(pseudo || '');
+
+  // useNavigate permet de changer de route après validation.
   const navigate = useNavigate();
 
   const handleSubmit = (event) => {
@@ -13,6 +20,7 @@ const Accueil = () => {
     const cleaned = username.trim();
     if (!cleaned) return;
 
+    // Mise à jour du contexte global avant d'aller sur /quiz.
     setPseudo(cleaned);
     navigate('/quiz');
   };

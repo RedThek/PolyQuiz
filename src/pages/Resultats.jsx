@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 import '../styles/resultats.css';
 
+// Page des résultats qui lit les données globales depuis UserContext.
 const Resultats = () => {
   const { pseudo, bestScore, lastScore, lastDuration, lastQuestionCount } = useContext(UserContext);
   const navigate = useNavigate();
 
+  // useMemo évite de recalculer le ratio à chaque rendu si les valeurs n'ont pas changé.
   const ratio = useMemo(() => {
     if (!lastQuestionCount) return 0;
     return Number(((lastScore / lastQuestionCount) * 100).toFixed(1));
@@ -21,7 +23,9 @@ const Resultats = () => {
         </header>
 
         <div className="resultats-summary">
-          <p>Score du dernier quiz : <strong>{lastScore}</strong> / <strong>{lastQuestionCount}</strong></p>
+          <p>
+            Score du dernier quiz : <strong>{lastScore}</strong> / <strong>{lastQuestionCount}</strong>
+          </p>
           <p>Meilleur score global : <strong>{bestScore}</strong></p>
           <p>Durée du dernier quiz : <strong>{lastDuration}s</strong></p>
           <div className="ratio-meter">

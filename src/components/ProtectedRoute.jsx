@@ -2,16 +2,16 @@ import { useContext } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
 
+// ProtectedRoute empêche l'accès aux routes protégées si l'utilisateur n'est pas connecté.
 const ProtectedRoute = () => {
-  // Interrogation du UserContext pour vérifier si un pseudo est présent (indiquant que l'utilisateur est connecté)
-  const { pseudo } = useContext(UserContext);
+  const { pseudo } = useContext(UserContext); // lecture du contexte utilisateur
 
-  // Si pas de pseudo, blocage du rendu et redirection vers l'accueil via <Navigate> de react-router-dom
   if (!pseudo) {
+    // Redirige vers l'accueil si aucun pseudo n'est trouvé.
     return <Navigate to="/" replace />;
   }
 
-  // <Outlet /> permet d'afficher les composants enfants définis dans les routes protégées (ex: /quiz, /resultats) si l'utilisateur est authentifié
+  // Si l'utilisateur a un pseudo, on affiche la route enfant.
   return <Outlet />;
 };
 

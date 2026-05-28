@@ -6,68 +6,70 @@ import { useTimer } from '../hooks/useTimer';
 import { UserContext } from '../context/UserContext';
 import '../styles/quiz.css';
 
+// QuizEngine est le composant principal de la page de quiz.
+// Il rassemble le reducer d'état, le timer, les questions et le contexte utilisateur.
 const QuizEngine = () => {
-  const [state, dispatch] = useReducer(quizReducer, initialState);
-  const { pseudo, setBestScore, setLastScore, setLastDuration, setLastQuestionCount } = useContext(UserContext);
-  const { data: questions, loading, error } = useFetch('/questions.json');
-  const { secondsLeft, isActive, start, pause, reset } = useTimer(60);
-  const navigate = useNavigate();
+  const [state, dispatch] = useReducer(quizReducer, initialState); // état du quiz (question, score, statut)
+  const { pseudo, setBestScore, setLastScore, setLastDuration, setLastQuestionCount } = useContext(UserContext); // contexte utilisateur
+  const { data: questions, loading, error } = useFetch('/questions.json'); // récupération des questions
+  const { secondsLeft, isActive, start, pause, reset } = useTimer(60); // timer de 60s
+  const navigate = useNavigate(); // navigation entre pages
 
-  const totalQuestions = questions ? questions.length : 0;
+  const totalQuestions = questions ? questions.length : 0; // nombre total de questions chargées
 
   const currentQuestion = useMemo(
     () => (questions && questions[state.currentIndex] ? questions[state.currentIndex] : null),
     [questions, state.currentIndex]
-  );
+  ); // question en cours, memoisée pour éviter les recalculs inutiles
 
   const progressLabel = useMemo(
     () => `${Math.min(state.currentIndex + 1, totalQuestions)} / ${totalQuestions}`,
     [state.currentIndex, totalQuestions]
-  );
+  ); // texte de progression du quiz
 
   const scoreLabel = useMemo(
     () => `${state.scoreTemporaire} bonne${state.scoreTemporaire > 1 ? 's' : ''}`,
     [state.scoreTemporaire]
-  );
+  ); // label de score avec pluriel
 
   const finishQuiz = useCallback(
     (finalScore) => {
-      setLastScore(finalScore);
-      setLastDuration(60 - secondsLeft);
-      setLastQuestionCount(totalQuestions);
-      setBestScore((previous) => Math.max(previous, finalScore));
-      dispatch({ type: 'FINISH_QUIZ' });
-      navigate('/resultats');
+      setLastScore(finalScore); // enregistre le score du dernier quiz
+      setLastDuration(60 - secondsLeft); // enregistre le temps utilisé
+      setLastQuestionCount(totalQuestions); // enregistre le nombre de questions du quiz
+      setBestScore((previous) => Math.max(previous, finalScore)); // met à jour le meilleur score si nécessaire
+      dispatch({ type: 'FINISH_QUIZ' }); // passe le quiz en statut terminé
+      navigate('/resultats'); // redirige vers la page des résultats
     },
     [dispatch, navigate, secondsLeft, setBestScore, setLastDuration, setLastQuestionCount, setLastScore, totalQuestions]
   );
 
   useEffect(() => {
     if (state.status === 'playing' && !isActive) {
-      start();
+      start(); // démarre le timer au début du quiz
     }
 
     if (state.status === 'finished') {
-      pause();
+      pause(); // arrête le timer quand le quiz est terminé
     }
   }, [state.status, isActive, start, pause]);
 
   useEffect(() => {
     if (state.status === 'finished') {
-      setLastDuration(60 - secondsLeft);
+      setLastDuration(60 - secondsLeft); // calcule la durée finale si le quiz est terminé
     }
   }, [state.status, secondsLeft, setLastDuration]);
 
   useEffect(() => {
     if (state.status === 'playing' && secondsLeft === 0) {
       pause();
-      finishQuiz(state.scoreTemporaire);
+      finishQuiz(state.scoreTemporaire); // termine le quiz automatiquement quand le timer arrive à zéro
     }
   }, [secondsLeft, state.status, state.scoreTemporaire, pause, finishQuiz]);
 
   const handleStartQuiz = () => {
-    reset(60);
-    dispatch({ type: 'START_QUIZ' });
+    reset(60); // remet le timer à 60 secondes
+    dispatch({ type: 'START_QUIZ' }); // change le statut du quiz en 'playing'
   };
 
   const handleAnswer = (reponse) => {
@@ -83,10 +85,10 @@ const QuizEngine = () => {
         reponseUtilisateur: reponse,
         bonneReponse: currentQuestion.bonne_reponse
       }
-    });
+    }); // enregistre la réponse de l'utilisateur
 
     if (isLastQuestion) {
-      finishQuiz(nextScore);
+      finishQuiz(nextScore); // termine le quiz si c'était la dernière question
     }
   };
 
