@@ -1,10 +1,16 @@
-import { useContext } from 'react';
+import { useMemo, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../context/UserContext';
+import '../styles/resultats.css';
 
 const Resultats = () => {
-  const { pseudo, bestScore, lastScore, lastDuration } = useContext(UserContext);
+  const { pseudo, bestScore, lastScore, lastDuration, lastQuestionCount } = useContext(UserContext);
   const navigate = useNavigate();
+
+  const ratio = useMemo(() => {
+    if (!lastQuestionCount) return 0;
+    return Number(((lastScore / lastQuestionCount) * 100).toFixed(1));
+  }, [lastScore, lastQuestionCount]);
 
   return (
     <main className="resultats-page">
@@ -15,9 +21,16 @@ const Resultats = () => {
         </header>
 
         <div className="resultats-summary">
-          <p>Score du dernier quiz : <strong>{lastScore}</strong></p>
+          <p>Score du dernier quiz : <strong>{lastScore}</strong> / <strong>{lastQuestionCount}</strong></p>
           <p>Meilleur score global : <strong>{bestScore}</strong></p>
           <p>Durée du dernier quiz : <strong>{lastDuration}s</strong></p>
+          <div className="ratio-meter">
+            <span>Ratio de réussite : </span>
+            <strong>{ratio}%</strong>
+            <div className="ratio-bar-background">
+              <div className="ratio-bar-fill" style={{ width: `${ratio}%` }} />
+            </div>
+          </div>
         </div>
 
         <div className="resultats-actions">

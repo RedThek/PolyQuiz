@@ -1,15 +1,16 @@
-import { useReducer, useEffect, useMemo, useContext } from 'react';
+import { useReducer, useEffect, useMemo, useContext, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { quizReducer, initialState } from '../reducers/quizReducer';
 import { useFetch } from '../hooks/useFetch';
 import { useTimer } from '../hooks/useTimer';
 import { UserContext } from '../context/UserContext';
+import '../styles/quiz.css';
 
 const QuizEngine = () => {
   const [state, dispatch] = useReducer(quizReducer, initialState);
-  const { pseudo, setBestScore, setLastScore, setLastDuration } = useContext(UserContext);
+  const { pseudo, setBestScore, setLastScore, setLastDuration, setLastQuestionCount } = useContext(UserContext);
   const { data: questions, loading, error } = useFetch('/questions.json');
-  const { seconds, isActive, start, pause, reset } = useTimer(0);
+  const { secondsLeft, isActive, start, pause, reset } = useTimer(60);
   const navigate = useNavigate();
 
   const totalQuestions = questions ? questions.length : 0;
@@ -29,6 +30,18 @@ const QuizEngine = () => {
     [state.scoreTemporaire]
   );
 
+  const finishQuiz = useCallback(
+    (finalScore) => {
+      setLastScore(finalScore);
+      setLastDuration(60 - secondsLeft);
+      setLastQuestionCount(totalQuestions);
+      setBestScore((previous) => Math.max(previous, finalScore));
+      dispatch({ type: 'FINISH_QUIZ' });
+      navigate('/resultats');
+    },
+    [dispatch, navigate, secondsLeft, setBestScore, setLastDuration, setLastQuestionCount, setLastScore, totalQuestions]
+  );
+
   useEffect(() => {
     if (state.status === 'playing' && !isActive) {
       start();
@@ -41,20 +54,20 @@ const QuizEngine = () => {
 
   useEffect(() => {
     if (state.status === 'finished') {
-      setLastDuration(seconds);
+      setLastDuration(60 - secondsLeft);
     }
-  }, [state.status, seconds, setLastDuration]);
+  }, [state.status, secondsLeft, setLastDuration]);
+
+  useEffect(() => {
+    if (state.status === 'playing' && secondsLeft === 0) {
+      pause();
+      finishQuiz(state.scoreTemporaire);
+    }
+  }, [secondsLeft, state.status, state.scoreTemporaire, pause, finishQuiz]);
 
   const handleStartQuiz = () => {
-    reset(0);
+    reset(60);
     dispatch({ type: 'START_QUIZ' });
-  };
-
-  const finishQuiz = (finalScore) => {
-    setLastScore(finalScore);
-    setBestScore((previous) => Math.max(previous, finalScore));
-    dispatch({ type: 'FINISH_QUIZ' });
-    navigate('/resultats');
   };
 
   const handleAnswer = (reponse) => {
@@ -114,10 +127,10 @@ const QuizEngine = () => {
 
         {state.status === 'playing' && currentQuestion && (
           <div>
-            <div>
+            <div className="quiz-status-bar">
               <strong>Question {progressLabel}</strong>
               <span>Score : {scoreLabel}</span>
-              <span>Temps : {seconds}s</span>
+              <span className={secondsLeft <= 10 ? 'timer warning' : 'timer'}>Temps restant : {secondsLeft}s</span>
             </div>
             <h2>{currentQuestion.libelle}</h2>
             <div>
@@ -138,7 +151,7 @@ const QuizEngine = () => {
           <div>
             <h2>Quiz terminé</h2>
             <p>Ton score : {state.scoreTemporaire} / {totalQuestions}</p>
-            <p>Durée : {seconds}s</p>
+            <p>Durée : {60 - secondsLeft}s</p>
             <button type="button" onClick={() => navigate('/resultats')}>
               Voir les résultats complets
             </button>

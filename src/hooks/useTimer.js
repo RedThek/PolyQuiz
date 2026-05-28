@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 
-export const useTimer = (initialSeconds = 0) => {
-  const [seconds, setSeconds] = useState(initialSeconds);
+export const useTimer = (initialSeconds = 60) => {
+  const [secondsLeft, setSecondsLeft] = useState(initialSeconds);
   const [isActive, setIsActive] = useState(false);
   const intervalRef = useRef(null);
 
@@ -9,24 +9,41 @@ export const useTimer = (initialSeconds = 0) => {
     if (!isActive) return;
 
     intervalRef.current = window.setInterval(() => {
-      setSeconds((previous) => previous + 1);
+      setSecondsLeft((previous) => {
+        if (previous <= 1) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+          setIsActive(false);
+          return 0;
+        }
+        return previous - 1;
+      });
     }, 1000);
 
-    return () => window.clearInterval(intervalRef.current);
+    return () => {
+      window.clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    };
   }, [isActive]);
 
   const start = useCallback(() => {
-    setIsActive(true);
-  }, []);
+    if (secondsLeft > 0) {
+      setIsActive(true);
+    }
+  }, [secondsLeft]);
 
   const pause = useCallback(() => {
     setIsActive(false);
+    window.clearInterval(intervalRef.current);
+    intervalRef.current = null;
   }, []);
 
-  const reset = useCallback((value = 0) => {
-    setSeconds(value);
+  const reset = useCallback((value = initialSeconds) => {
+    window.clearInterval(intervalRef.current);
+    intervalRef.current = null;
+    setSecondsLeft(value);
     setIsActive(false);
-  }, []);
+  }, [initialSeconds]);
 
-  return { seconds, isActive, start, pause, reset };
+  return { secondsLeft, isActive, start, pause, reset };
 };
