@@ -19,5 +19,54 @@
     "libelle": "Quel est le joueur avec le plus de ballon d'or au monde ?",
     "options": ["Cristiano Ronaldo", "Ronaldinho", "Lionel Messi", "Kylian Mbappe"],
     "bonne_reponse": "Lionel Messi"
+  },
+  {
+    "id": 4,
+    "categorie": "F1",
+    "libelle": "Quel pilote a remporté le championnat du monde de Formule 1 en 2023 ?",
+    "options": ["Fernando Alonso", "Max Verstappen", "Charles Leclerc", "Lewis Hamilton"],
+    "bonne_reponse": "Max Verstappen"
+  },
+  {
+    "id": 5,
+    "categorie": "MotoGP",
+    "libelle": "Quel pilote détient le plus grand nombre de titres en MotoGP ?",
+    "options": ["Valentino Rossi", "Marc Marquez", "Giacomo Agostini", "Mick Doohan"],
+    "bonne_reponse": "Valentino Rossi"
+  },
+  {
+    "id": 6,
+    "categorie": "NBA",
+    "libelle": "Quel joueur NBA possède le record de points en carrière ?",
+    "options": ["Kobe Bryant", "Michael Jordan", "LeBron James", "Kareem Abdul-Jabbar"],
+    "bonne_reponse": "Kareem Abdul-Jabbar"
+  },
+  {
+    "id": 7,
+    "categorie": "Manga",
+    "libelle": "Dans One Piece, qui est le véritable roi des pirates ?",
+    "options": ["Monkey D. Luffy", "Edward Newgate", "Gol D. Roger", "Shanks"],
+    "bonne_reponse": "Gol D. Roger"
+  },
+  {
+    "id": 8,
+    "categorie": "NBA",
+    "libelle": "Quelle franchise NBA détient le plus de titres historiques ?",
+    "options": ["Los Angeles Lakers", "Chicago Bulls", "Boston Celtics", "Golden State Warriors"],
+    "bonne_reponse": "Boston Celtics"
+  },
+  {
+    "id": 9,
+    "categorie": "Anime",
+    "libelle": "Quel protagoniste est le chasseur de démons dans Demon Slayer ?",
+    "options": ["Tanjiro Kamado", "Gon Freecss", "Naruto Uzumaki", "Ichigo Kurosaki"],
+    "bonne_reponse": "Tanjiro Kamado"
+  },
+  {
+    "id": 10,
+    "categorie": "Football",
+    "libelle": "Quel joueur a remporté la Coupe du Monde 2018 avec la France ?",
+    "options": ["Harry Kane", "Antoine Griezmann", "Luka Modric", "Neymar"],
+    "bonne_reponse": "Antoine Griezmann"
   }
 ]
