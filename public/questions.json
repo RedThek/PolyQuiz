@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "categorie": "Manga",
+    "libelle": "Quel est le nom du démon renard à neuf queues dans Naruto ?",
+    "options": ["Shukaku", "Kurama", "Matatabi", "Gyuki"],
+    "bonne_reponse": "Kurama"
+  },
+  {
+    "id": 2,
+    "categorie": "F1",
+    "libelle": "Quel pilote détient le record de championnats du monde à égalité avec Michael Schumacher ?",
+    "options": ["Ayrton Senna", "Alain Prost", "Lewis Hamilton", "Sebastian Vettel"],
+    "bonne_reponse": "Lewis Hamilton"
+  },
+  {
+    "id": 3,
+    "categorie": "Football",
+    "libelle": "Quel est le joueur avec le plus de ballon d'or au monde ?",
+    "options": ["Cristiano Ronaldo", "Ronaldinho", "Lionel Messi", "Kylian Mbappe"],
+    "bonne_reponse": "Lionel Messi"
+  }
+]
