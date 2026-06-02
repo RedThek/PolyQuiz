@@ -5,7 +5,17 @@ export const initialState = {
   status: 'idle', // idle, playing, finished
 };
 
+/**
+ * 
+ * @param {*} state 
+ * @param {*} action 
+ * @returns 
+ */
 export const quizReducer = (state, action) => {
+
+  /**
+   * 
+   */
   switch (action.type) {
     case 'START_QUIZ':
       return { ...state, status: 'playing', currentIndex: 0, scoreTemporaire: 0 };
